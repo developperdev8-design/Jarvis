@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
-<meta name="theme-color" content="#05080f" />
+<meta name="theme-color" content="#0d0a04" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <link rel="manifest" href="./manifest.json" />
@@ -15,14 +15,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet" />
 <style>
   :root{
-    --bg:#05080f; --panel:rgba(14,22,38,.72); --line:rgba(80,160,220,.18);
-    --cyan:#22d3ee; --blue:#3b82f6; --green:#22c55e; --amber:#f59e0b; --red:#ef4444;
-    --txt:#dbeafe; --muted:#7f9bc0; --accent:var(--cyan);
+    --bg:#0d0a04; --panel:rgba(32,22,10,.72); --line:rgba(200,140,70,.22);
+    --cyan:#ff9e2c; --blue:#ff6a1a; --green:#ffb020; --amber:#f59e0b; --red:#ef4444;
+    --txt:#ffe9d5; --muted:#d3aa7c; --accent:var(--cyan);
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
   html,body{height:100%;margin:0;}
   body{
-    background:radial-gradient(130% 90% at 50% 0%, #0a1426 0%, #05080f 55%, #03050a 100%);
+    background:radial-gradient(130% 90% at 50% 0%, #291a05 0%, #0d0a04 55%, #080400 100%);
     color:var(--txt); font-family:'Rajdhani',system-ui,sans-serif;
     overflow:hidden; display:flex; flex-direction:column;
     height:100dvh; user-select:none;
@@ -33,24 +33,34 @@
   .hud-corner.bl{bottom:10px;left:10px;border-right:0;border-top:0;}
   .hud-corner.br{bottom:10px;right:10px;border-left:0;border-top:0;}
 
-  header{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:14px 20px calc(6px); z-index:5;
-  }
-  .brand{font-family:'Orbitron';font-weight:900;letter-spacing:.32em;font-size:18px;
+  header{display:flex; align-items:center; justify-content:space-between; padding:14px 20px 6px; z-index:5;}
+  .brandwrap{display:flex;align-items:center;gap:10px;}
+  .brand{font-family:'Orbitron';font-weight:900;letter-spacing:.3em;font-size:17px;
     background:linear-gradient(90deg,var(--cyan),var(--blue)); -webkit-background-clip:text;
-    background-clip:text; color:transparent; text-shadow:0 0 22px rgba(34,211,238,.25);}
+    background-clip:text; color:transparent; text-shadow:0 0 22px rgba(255,158,44,.25);}
   .icon-btn{width:42px;height:42px;border-radius:12px;border:1px solid var(--line);
-    background:rgba(20,32,54,.55); color:var(--cyan); font-size:20px; display:grid;
+    background:rgba(42,30,14,.55); color:var(--cyan); font-size:20px; display:grid;
     place-items:center; cursor:pointer; backdrop-filter:blur(6px); transition:.2s;}
-  .icon-btn:active{transform:scale(.92); background:rgba(34,211,238,.18);}
+  .icon-btn:active{transform:scale(.92); background:rgba(255,158,44,.18);}
+
+  /* --- Mascotte --- */
+  .mascot{width:44px;height:44px;cursor:pointer;animation:bob 3s ease-in-out infinite;flex:0 0 auto;}
+  .mascot svg{width:100%;height:100%;filter:drop-shadow(0 3px 10px rgba(255,158,44,.4));}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  .mascot .eye{transform-origin:center;animation:blink 4.5s infinite;}
+  @keyframes blink{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+  .mbubble{position:fixed;top:60px;left:16px;max-width:240px;background:var(--panel);
+    border:1px solid var(--line);color:var(--txt);padding:10px 14px;border-radius:14px;
+    border-top-left-radius:4px;font-size:14px;z-index:40;opacity:0;transform:translateY(-8px) scale(.96);
+    transition:.25s;pointer-events:none;backdrop-filter:blur(8px);box-shadow:0 8px 24px rgba(0,0,0,.4);}
+  .mbubble.show{opacity:1;transform:translateY(0) scale(1);}
 
   .stage{flex:0 0 auto; display:flex; flex-direction:column; align-items:center; padding:4px 0 2px;}
-  .orb-wrap{position:relative; width:min(72vw,300px); aspect-ratio:1;}
+  .orb-wrap{position:relative; width:min(70vw,290px); aspect-ratio:1;}
   canvas#orb{width:100%; height:100%; display:block;}
   .status{font-family:'Orbitron'; font-weight:500; letter-spacing:.18em; font-size:13px;
     text-transform:uppercase; color:var(--accent); margin-top:2px; min-height:18px;
-    text-shadow:0 0 16px rgba(34,211,238,.4); transition:color .3s;}
+    text-shadow:0 0 16px rgba(255,158,44,.4); transition:color .3s;}
 
   .log{flex:1 1 auto; overflow-y:auto; padding:10px 16px 6px; display:flex; flex-direction:column; gap:10px;
     mask-image:linear-gradient(to bottom, transparent 0, #000 22px); scrollbar-width:thin;}
@@ -58,42 +68,42 @@
   .msg{max-width:86%; padding:10px 14px; border-radius:16px; font-size:16px; line-height:1.4;
     animation:pop .25s ease; word-wrap:break-word;}
   @keyframes pop{from{opacity:0;transform:translateY(8px) scale(.98);}to{opacity:1;}}
-  .msg.user{align-self:flex-end; background:linear-gradient(135deg,rgba(59,130,246,.35),rgba(34,211,238,.22));
-    border:1px solid rgba(59,130,246,.4); border-bottom-right-radius:5px;}
+  .msg.user{align-self:flex-end; background:linear-gradient(135deg,rgba(255,106,26,.32),rgba(255,158,44,.20));
+    border:1px solid rgba(255,106,26,.4); border-bottom-right-radius:5px;}
   .msg.bot{align-self:flex-start; background:var(--panel); border:1px solid var(--line);
     border-bottom-left-radius:5px; backdrop-filter:blur(8px);}
   .msg.sys{align-self:center; font-size:13px; color:var(--muted); background:transparent; border:0; text-align:center;}
   .chip{margin-top:8px; display:inline-flex; align-items:center; gap:9px; padding:11px 16px;
-    border-radius:13px; background:linear-gradient(135deg,rgba(34,197,94,.22),rgba(34,211,238,.14));
-    border:1px solid rgba(34,197,94,.45); color:#eafff2; font-weight:600; font-size:15px;
+    border-radius:13px; background:linear-gradient(135deg,rgba(255,176,32,.22),rgba(255,158,44,.14));
+    border:1px solid rgba(255,176,32,.45); color:#fff2e0; font-weight:600; font-size:15px;
     cursor:pointer; text-decoration:none; transition:.15s;}
   .chip:active{transform:scale(.96);} .chip .ic{font-size:18px;}
 
   .dock{flex:0 0 auto; padding:10px 16px calc(14px + env(safe-area-inset-bottom)); z-index:5;}
   .inputrow{display:flex; gap:10px; align-items:center;}
   .txt{flex:1; height:48px; border-radius:24px; border:1px solid var(--line);
-    background:rgba(16,26,44,.7); color:var(--txt); padding:0 18px; font-size:16px;
+    background:rgba(34,24,10,.7); color:var(--txt); padding:0 18px; font-size:16px;
     font-family:'Rajdhani'; outline:none; backdrop-filter:blur(6px);}
-  .txt:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(34,211,238,.15);}
+  .txt:focus{border-color:var(--accent); box-shadow:0 0 0 3px rgba(255,158,44,.15);}
   .mic{width:66px;height:66px;flex:0 0 auto;border-radius:50%;border:none;cursor:pointer;
-    background:radial-gradient(circle at 50% 35%, #1b3a66, #0b1f3b);
+    background:radial-gradient(circle at 50% 35%, #5a3410, #2b1704);
     color:var(--cyan); font-size:28px; display:grid; place-items:center; position:relative;
     box-shadow:0 0 0 1px var(--line), 0 10px 30px rgba(0,0,0,.5); transition:.2s;}
-  .mic.active{color:#fff; background:radial-gradient(circle at 50% 35%, #0f9d6b, #065f46);
-    box-shadow:0 0 0 1px rgba(34,197,94,.5), 0 0 34px rgba(34,197,94,.55);}
+  .mic.active{color:#1a1000; background:radial-gradient(circle at 50% 35%, #ffb020, #d4760f);
+    box-shadow:0 0 0 1px rgba(255,176,32,.5), 0 0 34px rgba(255,176,32,.55);}
   .mic.active::after{content:"";position:absolute;inset:-6px;border-radius:50%;
-    border:2px solid rgba(34,197,94,.5);animation:ring 1.3s ease-out infinite;}
+    border:2px solid rgba(255,176,32,.5);animation:ring 1.3s ease-out infinite;}
   @keyframes ring{to{transform:scale(1.5);opacity:0;}}
   .send{width:48px;height:48px;flex:0 0 auto;border-radius:50%;border:1px solid var(--line);
-    background:rgba(16,26,44,.7);color:var(--cyan);font-size:20px;cursor:pointer;display:none;place-items:center;}
+    background:rgba(34,24,10,.7);color:var(--cyan);font-size:20px;cursor:pointer;display:none;place-items:center;}
 
   /* --- modal réglages --- */
-  .overlay{position:fixed;inset:0;background:rgba(2,5,12,.72);backdrop-filter:blur(5px);
+  .overlay{position:fixed;inset:0;background:rgba(8,5,2,.74);backdrop-filter:blur(5px);
     display:none;align-items:flex-end;justify-content:center;z-index:50;}
   .overlay.open{display:flex;animation:fade .2s;}
   @keyframes fade{from{opacity:0;}}
   .sheet{width:100%;max-width:560px;max-height:92dvh;overflow-y:auto;
-    background:linear-gradient(180deg,#0b1424,#070c16);border:1px solid var(--line);
+    background:linear-gradient(180deg,#1a1208,#0d0803);border:1px solid var(--line);
     border-radius:22px 22px 0 0;padding:18px 18px calc(26px + env(safe-area-inset-bottom));
     box-shadow:0 -10px 50px rgba(0,0,0,.6);animation:up .28s cubic-bezier(.2,.8,.2,1);}
   @keyframes up{from{transform:translateY(40px);opacity:.6;}}
@@ -102,30 +112,39 @@
   .field{margin-bottom:15px;}
   .field label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;letter-spacing:.04em;}
   .field input,.field select{width:100%;height:46px;border-radius:12px;border:1px solid var(--line);
-    background:rgba(16,26,44,.8);color:var(--txt);padding:0 14px;font-size:16px;font-family:'Rajdhani';outline:none;}
+    background:rgba(34,24,10,.8);color:var(--txt);padding:0 14px;font-size:16px;font-family:'Rajdhani';outline:none;}
   .field input:focus,.field select:focus{border-color:var(--accent);}
+  input[type="range"]{accent-color:var(--cyan);border:none !important;background:transparent !important;height:30px !important;}
   .hint{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.4;}
   .hint a{color:var(--cyan);}
   .row2{display:flex;gap:12px;} .row2 .field{flex:1;}
   .sub{font-family:'Orbitron';font-size:12px;letter-spacing:.16em;color:var(--muted);
     text-transform:uppercase;margin:18px 0 10px;border-top:1px solid var(--line);padding-top:16px;}
   .toggle{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:13px;
-    border:1px solid var(--line);background:rgba(16,26,44,.5);margin-bottom:9px;}
+    border:1px solid var(--line);background:rgba(34,24,10,.5);margin-bottom:9px;}
   .toggle .tl{display:flex;align-items:center;gap:12px;}
   .toggle .tl .ic{font-size:20px;width:26px;text-align:center;}
   .toggle .tl .nm{font-size:16px;font-weight:600;} .toggle .tl .ds{font-size:12px;color:var(--muted);}
   .sw{position:relative;width:48px;height:28px;flex:0 0 auto;}
   .sw input{opacity:0;width:0;height:0;}
-  .sw span{position:absolute;inset:0;border-radius:28px;background:#1c2b45;transition:.2s;border:1px solid var(--line);}
+  .sw span{position:absolute;inset:0;border-radius:28px;background:#33240f;transition:.2s;border:1px solid var(--line);}
   .sw span::before{content:"";position:absolute;width:20px;height:20px;border-radius:50%;left:3px;top:3px;
-    background:#5b7297;transition:.2s;}
-  .sw input:checked + span{background:rgba(34,211,238,.35);border-color:var(--cyan);}
+    background:#a07a44;transition:.2s;}
+  .sw input:checked + span{background:rgba(255,158,44,.35);border-color:var(--cyan);}
   .sw input:checked + span::before{transform:translateX(20px);background:var(--cyan);}
+  .memlist{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;}
+  .memitem{font-size:14px;color:var(--txt);background:rgba(34,24,10,.5);border:1px solid var(--line);
+    border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;gap:8px;align-items:center;}
+  .memitem button{background:none;border:0;color:var(--muted);font-size:16px;cursor:pointer;}
+  .btnrow{display:flex;gap:10px;}
+  .ghost{flex:1;height:44px;border:1px solid var(--line);border-radius:12px;cursor:pointer;
+    background:transparent;color:var(--muted);font-family:'Rajdhani';font-size:14px;font-weight:600;}
+  .ghost:active{opacity:.8;}
   .save{width:100%;height:52px;border:none;border-radius:14px;margin-top:18px;cursor:pointer;
-    background:linear-gradient(135deg,var(--cyan),var(--blue));color:#02121e;font-weight:700;
+    background:linear-gradient(135deg,var(--cyan),var(--blue));color:#2a1400;font-weight:700;
     font-family:'Orbitron';letter-spacing:.1em;font-size:14px;}
   .save:active{opacity:.85;}
-  .toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:rgba(10,18,32,.95);
+  .toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:rgba(28,19,8,.96);
     border:1px solid var(--line);color:var(--txt);padding:11px 18px;border-radius:12px;font-size:14px;
     z-index:80;opacity:0;transition:.3s;pointer-events:none;max-width:84vw;text-align:center;}
   .toast.show{opacity:1;}
@@ -137,9 +156,28 @@
   <div class="hud-corner bl"></div><div class="hud-corner br"></div>
 
   <header>
-    <div class="brand" id="brand">J.A.R.V.I.S</div>
+    <div class="brandwrap">
+      <div class="mascot" id="mascot" title="JARVIS">
+        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+          <defs><radialGradient id="mg" cx="50%" cy="40%" r="70%">
+            <stop offset="0%" stop-color="#4a3310"/><stop offset="100%" stop-color="#1c1305"/></radialGradient></defs>
+          <line x1="60" y1="20" x2="60" y2="7" stroke="#ff9e2c" stroke-width="3"/>
+          <circle cx="60" cy="6" r="4.5" fill="#ffd089"/>
+          <rect x="22" y="22" width="76" height="62" rx="19" fill="url(#mg)" stroke="#ff9e2c" stroke-width="2.5"/>
+          <rect x="15" y="42" width="7" height="20" rx="3.5" fill="#ff9e2c"/>
+          <rect x="98" y="42" width="7" height="20" rx="3.5" fill="#ff9e2c"/>
+          <circle class="eye" cx="45" cy="50" r="8.5" fill="#0d0a04"/>
+          <circle class="eye" cx="75" cy="50" r="8.5" fill="#0d0a04"/>
+          <circle cx="47" cy="47" r="3" fill="#ffd089"/><circle cx="77" cy="47" r="3" fill="#ffd089"/>
+          <path d="M45 66 Q60 77 75 66" stroke="#ffb020" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="brand">J.A.R.V.I.S</div>
+    </div>
     <button class="icon-btn" id="gear" aria-label="Réglages">⚙</button>
   </header>
+
+  <div class="mbubble" id="mbubble"></div>
 
   <div class="stage">
     <div class="orb-wrap"><canvas id="orb" width="600" height="600"></canvas></div>
@@ -164,7 +202,11 @@
       <div class="field">
         <label>Clé API Google Gemini</label>
         <input type="password" id="apiKey" placeholder="Colle ta clé ici" autocomplete="off" />
-        <div class="hint">Gratuite sur <a href="https://aistudio.google.com/api-keys" target="_blank" rel="noopener">aistudio.google.com/api-keys</a> → « Create API key ». Elle reste sur ton téléphone.</div>
+        <div class="hint">Gratuite sur <a href="https://aistudio.google.com/api-keys" target="_blank" rel="noopener">aistudio.google.com/api-keys</a> → « Create API key ». Elle reste sur ton appareil.</div>
+      </div>
+      <div class="field">
+        <label>Ton prénom (pour que JARVIS te connaisse)</label>
+        <input type="text" id="userName" placeholder="Ex : Max" autocomplete="off" />
       </div>
       <div class="row2">
         <div class="field"><label>Modèle</label>
@@ -190,9 +232,22 @@
         <div class="field"><label>Tonalité <span id="pitchV"></span></label><input type="range" id="pitch" min="0.6" max="1.4" step="0.05" /></div>
       </div>
 
+      <div class="sub">Mains libres</div>
+      <div class="toggle">
+        <div class="tl"><span class="ic">🎙️</span><div><div class="nm">« Hey Jarvis »</div><div class="ds">Dis « Jarvis » pour l'activer sans toucher l'écran</div></div></div>
+        <div class="sw"><input type="checkbox" id="wake"><span></span></div>
+      </div>
+
       <div class="sub">Connexions aux applis de l'appareil</div>
       <div id="integrations"></div>
       <div class="hint">Sur ton téléphone, ces actions ouvrent l'appli native (Téléphone, Messages, WhatsApp, Mail, Maps…). Tu valides toujours l'envoi ou l'appel toi-même.</div>
+
+      <div class="sub">Mémoire</div>
+      <div class="memlist" id="memlist"></div>
+      <div class="btnrow">
+        <button class="ghost" id="clearMem">Oublier la mémoire</button>
+        <button class="ghost" id="clearHist">Effacer la conversation</button>
+      </div>
 
       <button class="save" id="save">Enregistrer</button>
     </div>
@@ -220,6 +275,7 @@ const INTEGRATIONS = [
 /* ---------- Réglages ---------- */
 const DEFAULTS = {
   apiKey:'', model:'gemini-flash-latest', lang:'fr-FR', voiceURI:'', rate:1, pitch:1,
+  userName:'', memory:[], wake:false,
   integrations:Object.fromEntries(INTEGRATIONS.map(i=>[i.key,true]))
 };
 const MODEL_MIGRATION = {
@@ -231,14 +287,20 @@ function load(){
   let s; try{ s=Object.assign({}, DEFAULTS, JSON.parse(localStorage.getItem('jarvis')||'{}')); }catch{ s={...DEFAULTS}; }
   if(MODEL_MIGRATION[s.model]) s.model=MODEL_MIGRATION[s.model];
   if(!s.model) s.model=DEFAULTS.model;
+  if(!Array.isArray(s.memory)) s.memory=[];
   return s;
 }
 function save(){ localStorage.setItem('jarvis', JSON.stringify(settings)); }
 
+/* ---------- Mémoire de conversation ---------- */
+let history=[];
+function loadHist(){ try{ history=JSON.parse(localStorage.getItem('jarvis_hist')||'[]'); if(!Array.isArray(history)) history=[]; }catch{ history=[]; } }
+function saveHist(){ try{ localStorage.setItem('jarvis_hist', JSON.stringify(history.slice(-16))); }catch{} }
+
 /* ---------- État / orbe ---------- */
 let state='idle';
 const STATUS={idle:'En veille',listening:'À votre écoute…',thinking:'Analyse…',speaking:'Réponse…'};
-const COLORS={idle:[34,211,238],listening:[34,197,94],thinking:[245,158,11],speaking:[59,130,246]};
+const COLORS={idle:[255,158,44],listening:[255,176,32],thinking:[245,158,11],speaking:[255,106,26]};
 function setState(s){ state=s; $('#status').textContent=STATUS[s]||''; const c=COLORS[s]; $('#status').style.color=`rgb(${c[0]},${c[1]},${c[2]})`; }
 
 const cv=$('#orb'), ctx=cv.getContext('2d'); let energy=0, t=0;
@@ -249,31 +311,32 @@ function draw(){
   const target = state==='idle'?0.18 : state==='thinking'?0.55 : state==='speaking'?0.8 : 0.65;
   energy += (target-energy)*0.08;
   const pulse = 1 + Math.sin(t*(state==='speaking'?7:3))*0.04*(0.4+energy);
-
   ctx.save(); ctx.translate(cx,cy);
   ctx.shadowBlur=40; ctx.shadowColor=col(0.5);
-  // anneau de ticks externe
   ctx.save(); ctx.rotate(t*0.25);
   for(let i=0;i<60;i++){ ctx.rotate(Math.PI*2/60); const r=250*pulse;
     ctx.beginPath(); ctx.moveTo(r,0); ctx.lineTo(r-(i%5===0?22:11),0);
     ctx.strokeStyle=col(i%5===0?0.5:0.22); ctx.lineWidth=i%5===0?4:2; ctx.stroke(); }
   ctx.restore();
-  // arcs tournants
   const arcs=[[210,0.9,1,1.1],[175,-0.7,0.55,2.4],[140,1.3,0.8,0.6]];
   arcs.forEach((a,idx)=>{ ctx.save(); ctx.rotate(t*a[1]+idx);
     ctx.beginPath(); ctx.arc(0,0,a[0]*pulse,0,Math.PI*a[2]);
     ctx.strokeStyle=col(0.55); ctx.lineWidth=3; ctx.stroke(); ctx.restore(); });
-  // halo
   const g=ctx.createRadialGradient(0,0,10,0,0,150*pulse);
   g.addColorStop(0,col(0.42+energy*0.4)); g.addColorStop(0.6,col(0.1)); g.addColorStop(1,col(0));
   ctx.beginPath(); ctx.arc(0,0,150*pulse,0,Math.PI*2); ctx.fillStyle=g; ctx.fill();
-  // coeur
   ctx.beginPath(); ctx.arc(0,0,(52+energy*26)*pulse,0,Math.PI*2);
   ctx.fillStyle=col(0.9); ctx.shadowBlur=60; ctx.fill();
   ctx.restore();
   requestAnimationFrame(draw);
 }
 draw();
+
+/* ---------- Mascotte : bulle ---------- */
+let mbT;
+function mascotSay(text){ const b=$('#mbubble'); b.textContent=text; b.classList.add('show'); clearTimeout(mbT); mbT=setTimeout(()=>b.classList.remove('show'),6000); }
+const QUIPS=["À votre service.","Toujours prêt.","Besoin d'un coup de main ?","Je vous écoute.","Opérationnel."];
+$('#mascot').onclick=()=>mascotSay(QUIPS[Math.floor(Math.random()*QUIPS.length)]);
 
 /* ---------- Journal ---------- */
 const logEl=$('#log');
@@ -300,11 +363,11 @@ function speak(text){ return new Promise(res=>{
   u.onend=res; u.onerror=res; setState('speaking'); speechSynthesis.speak(u);
 }); }
 
-/* ---------- Voix : reconnaissance ---------- */
+/* ---------- Voix : reconnaissance (appui micro) ---------- */
 const SR = window.SpeechRecognition||window.webkitSpeechRecognition;
 let recog=null, listening=false;
 function toggleListen(){
-  primeTTS();
+  primeTTS(); stopWake();
   if(!SR){ toast('Reconnaissance vocale non supportée ici. Écris ton message.'); $('#txt').focus(); return; }
   if(listening){ recog && recog.stop(); return; }
   recog=new SR(); recog.lang=settings.lang; recog.interimResults=true; recog.maxAlternatives=1; recog.continuous=false;
@@ -313,21 +376,42 @@ function toggleListen(){
   recog.onresult=(e)=>{ finalText=''; for(const r of e.results) finalText+=r[0].transcript; $('#txt').value=finalText; };
   recog.onerror=(e)=>{ if(e.error==='not-allowed') toast('Autorise le micro pour parler.'); };
   recog.onend=()=>{ listening=false; $('#mic').classList.remove('active'); $('#txt').value='';
-    if(finalText.trim()){ handleUser(finalText.trim()); } else setState('idle'); };
+    if(finalText.trim()){ handleUser(finalText.trim()); } else { setState('idle'); resumeWakeMaybe(); } };
   try{ recog.start(); }catch{ setState('idle'); }
 }
 
+/* ---------- Mode mains libres : « Hey Jarvis » ---------- */
+let wakeRecog=null, wakeOn=false;
+function startWake(){
+  if(!SR || !settings.wake || wakeOn || listening) return;
+  try{
+    wakeRecog=new SR(); wakeRecog.lang=settings.lang; wakeRecog.continuous=true; wakeRecog.interimResults=true;
+    wakeRecog.onresult=(e)=>{
+      const txt=Array.from(e.results).map(r=>r[0].transcript).join(' ').toLowerCase();
+      if(/\bjarvis\b/.test(txt)){ stopWake(); mascotSay('Oui ?'); setTimeout(()=>toggleListen(),300); }
+    };
+    wakeRecog.onerror=()=>{};
+    wakeRecog.onend=()=>{ wakeOn=false; if(settings.wake && !listening) setTimeout(startWake,500); };
+    wakeRecog.start(); wakeOn=true;
+  }catch(e){ wakeOn=false; }
+}
+function stopWake(){ if(wakeRecog){ try{wakeRecog.stop();}catch{} } wakeOn=false; }
+function resumeWakeMaybe(){ if(settings.wake && !listening) setTimeout(startWake,600); }
+
 /* ---------- Cerveau Gemini ---------- */
-let history=[];
 function systemPrompt(){
   const now=new Date();
   const actions=INTEGRATIONS.filter(i=>settings.integrations[i.key]).map(i=>i.key).join(', ')||'aucune';
-  return `Tu es JARVIS, un assistant personnel vocal en français, inspiré d'Iron Man : efficace, poli, un brin spirituel.
+  let mem='';
+  if(settings.userName) mem+=`\nL'utilisateur s'appelle ${settings.userName} ; utilise son prénom de temps en temps.`;
+  if(settings.memory && settings.memory.length) mem+=`\nInfos à retenir sur l'utilisateur : ${settings.memory.join(' ; ')}.`;
+  return `Tu es JARVIS, un assistant personnel vocal en français, inspiré d'Iron Man : efficace, poli, un brin spirituel.${mem}
 Date et heure actuelles : ${now.toLocaleString('fr-FR')}.
 Tes réponses sont LUES À VOIX HAUTE : sois bref (1 à 3 phrases), naturel, sans listes, sans markdown, sans URL.
-Tu peux déclencher UNE action parmi : ${actions}. N'utilise QUE celles-ci.
+Tu as de la mémoire : si l'utilisateur donne une info personnelle utile (prénom, préférence, fait à retenir), utilise l'action "retenir" avec le champ "message".
+Tu peux déclencher UNE action parmi : ${actions}, retenir. N'utilise QUE celles-ci.
 Réponds UNIQUEMENT par un objet JSON valide (aucun texte autour), de la forme exacte :
-{"reponse":"<ce que tu dis à voix haute>","action":{"type":"<une parmi: ${actions}, ou aucune>","numero":"","destinataire":"","message":"","sujet":"","destination":"","requete":"","titre":"","date":"","ville":"","url":""}}
+{"reponse":"<ce que tu dis à voix haute>","action":{"type":"<une parmi: ${actions}, retenir, ou aucune>","numero":"","destinataire":"","message":"","sujet":"","destination":"","requete":"","titre":"","date":"","ville":"","url":""}}
 Ne garde dans "action" que les champs utiles ; si aucune action : {"type":"aucune"}.
 Pour un appel/SMS/WhatsApp/email, ne confirme pas l'envoi toi-même : l'utilisateur validera en appuyant. Pour la météo, type="meteo" et remplis "ville" ; garde "reponse" courte.`;
 }
@@ -338,7 +422,6 @@ function extractJSON(text){
   if(m){ try{ return JSON.parse(m[0]); }catch{} }
   return null;
 }
-
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function callGemini(body,url){
   let lastErr='Échec de la requête.';
@@ -349,13 +432,11 @@ async function callGemini(body,url){
     const d=await r.json().catch(()=>({}));
     if(r.ok) return d;
     lastErr=d?.error?.message||('HTTP '+r.status);
-    // Surcharge / erreur temporaire : on patiente et on réessaie
     if(r.status===503||r.status===500||r.status===429){ await sleep(1500*(a+1)); continue; }
     throw new Error(lastErr);
   }
   throw new Error('Le modèle est très sollicité en ce moment. Réessaie dans quelques secondes, ou choisis « Flash Lite » dans les réglages.');
 }
-
 async function ask(userText){
   history.push({role:'user',parts:[{text:userText}]});
   if(history.length>16) history=history.slice(-16);
@@ -369,6 +450,7 @@ async function ask(userText){
   let obj=extractJSON(raw)||{reponse:raw, action:{type:'aucune'}};
   if(!obj.action) obj.action={type:'aucune'};
   history.push({role:'model',parts:[{text:obj.reponse||''}]});
+  saveHist();
   return obj;
 }
 
@@ -377,12 +459,14 @@ async function handleUser(text){
   addMsg(text,'user'); setState('thinking');
   let obj;
   try{ obj=await ask(text); }
-  catch(err){ const m='⚠️ '+err.message; addMsg(m,'bot'); setState('idle'); await speak("Un problème est survenu. Vérifie ta clé ou ta connexion."); return; }
+  catch(err){ addMsg('⚠️ '+err.message,'bot'); setState('idle'); await speak("Un problème est survenu. Vérifie ta clé ou ta connexion."); resumeWakeMaybe(); return; }
   let speech=obj.reponse||'';
   const a=obj.action||{type:'aucune'};
   const bubble=addMsg(speech||'…','bot');
 
-  if(a.type && a.type!=='aucune' && settings.integrations[a.type]){
+  if(a.type==='retenir' && (a.message||a.fait)){
+    settings.memory.push(a.message||a.fait); if(settings.memory.length>40) settings.memory=settings.memory.slice(-40); save();
+  } else if(a.type && a.type!=='aucune' && settings.integrations[a.type]){
     if(a.type==='meteo'){
       const w=await meteo(a.ville||a.destination||a.requete||'');
       if(w){ speech=(speech?speech+' ':'')+w; bubble.textContent=speech; }
@@ -393,6 +477,7 @@ async function handleUser(text){
   }
   await speak(speech);
   setState('idle');
+  resumeWakeMaybe();
 }
 
 function digits(s){ return (s||'').replace(/[^\d+]/g,'').replace(/^\+/,''); }
@@ -438,24 +523,38 @@ function buildIntegrations(){
     box.appendChild(el);
   });
 }
+function buildMemList(){
+  const box=$('#memlist'); box.innerHTML='';
+  if(!settings.memory.length){ box.innerHTML='<div class="hint">JARVIS n\'a encore rien retenu. Dis-lui « retiens que… ».</div>'; return; }
+  settings.memory.forEach((m,idx)=>{
+    const el=document.createElement('div'); el.className='memitem';
+    el.innerHTML=`<span>${m.replace(/</g,'&lt;')}</span><button data-i="${idx}" title="Oublier">✕</button>`;
+    box.appendChild(el);
+  });
+  box.querySelectorAll('button[data-i]').forEach(b=>b.onclick=()=>{ settings.memory.splice(+b.dataset.i,1); save(); buildMemList(); });
+}
 function fillVoiceSelect(){
   const sel=$('#voice'); if(!sel) return; const base=(settings.lang||'fr').slice(0,2);
   const list=voices.slice().sort((a,b)=>(b.lang.startsWith(base))-(a.lang.startsWith(base)));
   sel.innerHTML = list.map(v=>`<option value="${v.voiceURI}" ${v.voiceURI===settings.voiceURI?'selected':''}>${v.name} (${v.lang})</option>`).join('') || '<option>Voix système par défaut</option>';
 }
 function openSettings(focusKey){
-  $('#apiKey').value=settings.apiKey; $('#model').value=settings.model; $('#lang').value=settings.lang;
+  $('#apiKey').value=settings.apiKey; $('#userName').value=settings.userName||''; $('#model').value=settings.model; $('#lang').value=settings.lang;
   $('#rate').value=settings.rate; $('#pitch').value=settings.pitch; $('#rateV').textContent=(+settings.rate).toFixed(2); $('#pitchV').textContent=(+settings.pitch).toFixed(2);
-  buildIntegrations(); fillVoiceSelect();
+  $('#wake').checked=!!settings.wake;
+  buildIntegrations(); buildMemList(); fillVoiceSelect();
   $('#overlay').classList.add('open');
   if(focusKey){ toast('Ajoute ta clé Gemini pour démarrer.'); setTimeout(()=>$('#apiKey').focus(),300); }
 }
 function closeSettings(){ $('#overlay').classList.remove('open'); }
 function saveSettings(){
-  settings.apiKey=$('#apiKey').value.trim(); settings.model=$('#model').value; settings.lang=$('#lang').value;
+  settings.apiKey=$('#apiKey').value.trim(); settings.userName=$('#userName').value.trim();
+  settings.model=$('#model').value; settings.lang=$('#lang').value;
   settings.voiceURI=$('#voice').value; settings.rate=$('#rate').value; settings.pitch=$('#pitch').value;
+  settings.wake=$('#wake').checked;
   document.querySelectorAll('#integrations input[data-k]').forEach(c=>{ settings.integrations[c.dataset.k]=c.checked; });
   save(); closeSettings(); toast('Réglages enregistrés ✓');
+  if(settings.wake) resumeWakeMaybe(); else stopWake();
 }
 
 /* ---------- Toast ---------- */
@@ -469,21 +568,32 @@ $('#mic').onclick=toggleListen;
 $('#rate').oninput=e=>$('#rateV').textContent=(+e.target.value).toFixed(2);
 $('#pitch').oninput=e=>$('#pitchV').textContent=(+e.target.value).toFixed(2);
 $('#lang').onchange=fillVoiceSelect;
+$('#clearMem').onclick=()=>{ settings.memory=[]; save(); buildMemList(); toast('Mémoire effacée.'); };
+$('#clearHist').onclick=()=>{ history=[]; saveHist(); logEl.innerHTML=''; toast('Conversation effacée.'); addMsg('Nouvelle conversation.','sys'); };
 const txt=$('#txt'), sendBtn=$('#send');
 txt.addEventListener('input',()=>{ sendBtn.style.display=txt.value.trim()?'grid':'none'; });
 function submitText(){ const v=txt.value.trim(); if(!v)return; primeTTS(); txt.value=''; sendBtn.style.display='none'; handleUser(v); }
 sendBtn.onclick=submitText;
 txt.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); submitText(); } });
 
+/* ---------- Service worker (installable + hors ligne) ---------- */
+if('serviceWorker' in navigator){ window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{})); }
+
 /* ---------- Démarrage ---------- */
 window.addEventListener('load',()=>{
   setState('idle');
+  loadHist();
+  // Reprise de la conversation précédente
+  history.forEach(h=>{ const txt=(h.parts&&h.parts[0]&&h.parts[0].text)||''; if(txt) addMsg(txt, h.role==='user'?'user':'bot'); });
+  const prenom = settings.userName ? (' ' + settings.userName) : '';
   if(!settings.apiKey){
     addMsg("Bienvenue. Je suis JARVIS. Ouvre les réglages (⚙) pour coller ta clé Gemini, puis parle-moi.",'sys');
-    setTimeout(()=>openSettings(true),500);
+    setTimeout(()=>{ mascotSay('Salut ! Ajoute ta clé dans ⚙ pour commencer.'); openSettings(true); },500);
   } else {
-    addMsg("Prêt. Appuie sur le micro ou écris ton message.",'sys');
+    if(history.length) addMsg("— conversation reprise —",'sys');
+    setTimeout(()=>mascotSay(`Bonjour${prenom} ! Je suis prêt.`),500);
   }
+  if(settings.wake) setTimeout(startWake,1500);
 });
 </script>
 </body>
