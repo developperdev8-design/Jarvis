@@ -169,9 +169,10 @@
       <div class="row2">
         <div class="field"><label>Modèle</label>
           <select id="model">
-            <option value="gemini-2.5-flash">gemini-2.5-flash (rapide)</option>
-            <option value="gemini-2.5-pro">gemini-2.5-pro (puissant)</option>
-            <option value="gemini-2.0-flash">gemini-2.0-flash</option>
+            <option value="gemini-flash-latest">Gemini Flash (recommandé)</option>
+            <option value="gemini-3.8-flash">Gemini 3.8 Flash</option>
+            <option value="gemini-flash-lite-latest">Gemini Flash Lite (rapide)</option>
+            <option value="gemini-pro-latest">Gemini Pro (puissant)</option>
           </select>
         </div>
         <div class="field"><label>Langue</label>
@@ -218,11 +219,20 @@ const INTEGRATIONS = [
 
 /* ---------- Réglages ---------- */
 const DEFAULTS = {
-  apiKey:'', model:'gemini-2.5-flash', lang:'fr-FR', voiceURI:'', rate:1, pitch:1,
+  apiKey:'', model:'gemini-flash-latest', lang:'fr-FR', voiceURI:'', rate:1, pitch:1,
   integrations:Object.fromEntries(INTEGRATIONS.map(i=>[i.key,true]))
 };
+const MODEL_MIGRATION = {
+  'gemini-2.5-flash':'gemini-flash-latest', 'gemini-2.0-flash':'gemini-flash-latest',
+  'gemini-1.5-flash':'gemini-flash-latest', 'gemini-2.5-pro':'gemini-pro-latest', 'gemini-1.5-pro':'gemini-pro-latest'
+};
 let settings = load();
-function load(){ try{ return Object.assign({}, DEFAULTS, JSON.parse(localStorage.getItem('jarvis')||'{}')); }catch{ return {...DEFAULTS}; } }
+function load(){
+  let s; try{ s=Object.assign({}, DEFAULTS, JSON.parse(localStorage.getItem('jarvis')||'{}')); }catch{ s={...DEFAULTS}; }
+  if(MODEL_MIGRATION[s.model]) s.model=MODEL_MIGRATION[s.model];
+  if(!s.model) s.model=DEFAULTS.model;
+  return s;
+}
 function save(){ localStorage.setItem('jarvis', JSON.stringify(settings)); }
 
 /* ---------- État / orbe ---------- */
