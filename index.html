@@ -136,6 +136,11 @@
   .memitem{font-size:14px;color:var(--txt);background:rgba(34,24,10,.5);border:1px solid var(--line);
     border-radius:10px;padding:8px 12px;display:flex;justify-content:space-between;gap:8px;align-items:center;}
   .memitem button{background:none;border:0;color:var(--muted);font-size:16px;cursor:pointer;}
+  .keylist{display:flex;flex-direction:column;gap:6px;margin-bottom:4px;}
+  .keyadd{display:flex;gap:8px;margin-top:8px;align-items:center;}
+  .keyadd input{flex:1;height:44px;border-radius:12px;border:1px solid var(--line);background:rgba(34,24,10,.8);color:var(--txt);padding:0 14px;font-size:15px;font-family:'Rajdhani';outline:none;}
+  .keyadd input:focus{border-color:var(--accent);}
+  .keyadd .ghost{height:44px;flex:0 0 auto;white-space:nowrap;padding:0 14px;}
   .btnrow{display:flex;gap:10px;}
   .ghost{flex:1;height:44px;border:1px solid var(--line);border-radius:12px;cursor:pointer;
     background:transparent;color:var(--muted);font-family:'Rajdhani';font-size:14px;font-weight:600;}
@@ -159,15 +164,20 @@
     <div class="brandwrap">
       <div class="mascot" id="mascot" title="JARVIS">
         <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-          <defs><linearGradient id="mg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffbe6b"/><stop offset="1" stop-color="#ff8a1e"/></linearGradient></defs>
-          <ellipse cx="60" cy="105" rx="26" ry="6" fill="#000" opacity="0.18"/>
-          <path d="M60 14 C82 14 94 30 94 54 C94 82 82 100 60 100 C38 100 26 82 26 54 C26 30 38 14 60 14 Z" fill="url(#mg)"/>
-          <ellipse cx="45" cy="42" rx="10" ry="8" fill="#fff" opacity="0.18"/>
-          <circle class="eye" cx="49" cy="57" r="6.5" fill="#3a1e02"/>
-          <circle class="eye" cx="71" cy="57" r="6.5" fill="#3a1e02"/>
-          <circle cx="51" cy="55" r="2" fill="#fff"/><circle cx="73" cy="55" r="2" fill="#fff"/>
-          <path d="M50 73 Q60 81 70 73" stroke="#3a1e02" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-          <path d="M90 22 l2.2 5.8 5.8 2.2 -5.8 2.2 -2.2 5.8 -2.2 -5.8 -5.8 -2.2 5.8 -2.2 Z" fill="#fff" opacity="0.92"/>
+          <g fill="#ffffff">
+            <rect transform="rotate(0 60 60)"   x="56.5" y="10" width="7" height="40" rx="3.5"/>
+            <rect transform="rotate(30 60 60)"  x="56.5" y="10" width="7" height="40" rx="3.5"/>
+            <rect transform="rotate(60 60 60)"  x="56.5" y="10" width="7" height="40" rx="3.5"/>
+            <rect transform="rotate(90 60 60)"  x="56.5" y="10" width="7" height="40" rx="3.5"/>
+            <rect transform="rotate(120 60 60)" x="56.5" y="10" width="7" height="40" rx="3.5"/>
+            <rect transform="rotate(150 60 60)" x="56.5" y="10" width="7" height="40" rx="3.5"/>
+            <rect transform="rotate(180 60 60)" x="56.5" y="10" width="7" height="40" rx="3.5"/>
+            <rect transform="rotate(210 60 60)" x="56.5" y="10" width="7" height="40" rx="3.5"/>
+            <rect transform="rotate(240 60 60)" x="56.5" y="10" width="7" height="40" rx="3.5"/>
+            <rect transform="rotate(270 60 60)" x="56.5" y="10" width="7" height="40" rx="3.5"/>
+            <rect transform="rotate(300 60 60)" x="56.5" y="10" width="7" height="40" rx="3.5"/>
+            <rect transform="rotate(330 60 60)" x="56.5" y="10" width="7" height="40" rx="3.5"/>
+          </g>
         </svg>
       </div>
       <div class="brand">J.A.R.V.I.S</div>
@@ -198,9 +208,13 @@
       <h2>Réglages <button class="close-x" id="closeSet">✕</button></h2>
 
       <div class="field">
-        <label>Clé API Google Gemini</label>
-        <input type="password" id="apiKey" placeholder="Colle ta clé ici" autocomplete="off" />
-        <div class="hint">Gratuite sur <a href="https://aistudio.google.com/api-keys" target="_blank" rel="noopener">aistudio.google.com/api-keys</a> → « Create API key ». Elle reste sur ton appareil.</div>
+        <label>Clés API Google Gemini (ajoute-en plusieurs)</label>
+        <div class="keylist" id="keyList"></div>
+        <div class="keyadd">
+          <input type="password" id="newKey" placeholder="Colle une clé (AIza…)" autocomplete="off" />
+          <button type="button" class="ghost" id="addKey">+ Ajouter</button>
+        </div>
+        <div class="hint">Gratuites sur <a href="https://aistudio.google.com/api-keys" target="_blank" rel="noopener">aistudio.google.com/api-keys</a>. Si une clé est en panne ou saturée, JARVIS passe <b>automatiquement</b> à la suivante. Tout reste sur ton appareil.</div>
       </div>
       <div class="field">
         <label>Ton prénom (pour que JARVIS te connaisse)</label>
@@ -223,6 +237,14 @@
             <option value="ar-SA">العربية</option>
           </select>
         </div>
+      </div>
+      <div class="field"><label>Modèle de secours (si tout le reste échoue)</label>
+        <select id="backupModel">
+          <option value="gemini-pro-latest">Gemini Pro (très performant)</option>
+          <option value="gemini-3.8-flash">Gemini 3.8 Flash</option>
+          <option value="gemini-flash-lite-latest">Gemini Flash Lite</option>
+          <option value="">Aucun</option>
+        </select>
       </div>
       <div class="field"><label>Voix</label><select id="voice"></select></div>
       <div class="row2">
@@ -272,7 +294,7 @@ const INTEGRATIONS = [
 
 /* ---------- Réglages ---------- */
 const DEFAULTS = {
-  apiKey:'', model:'gemini-flash-latest', lang:'fr-FR', voiceURI:'', rate:1, pitch:1,
+  apiKeys:[], model:'gemini-flash-latest', backupModel:'gemini-pro-latest', lang:'fr-FR', voiceURI:'', rate:1, pitch:1,
   userName:'', memory:[], wake:false,
   integrations:Object.fromEntries(INTEGRATIONS.map(i=>[i.key,true]))
 };
@@ -285,7 +307,11 @@ function load(){
   let s; try{ s=Object.assign({}, DEFAULTS, JSON.parse(localStorage.getItem('jarvis')||'{}')); }catch{ s={...DEFAULTS}; }
   if(MODEL_MIGRATION[s.model]) s.model=MODEL_MIGRATION[s.model];
   if(!s.model) s.model=DEFAULTS.model;
+  if(MODEL_MIGRATION[s.backupModel]) s.backupModel=MODEL_MIGRATION[s.backupModel];
   if(!Array.isArray(s.memory)) s.memory=[];
+  if(!Array.isArray(s.apiKeys)) s.apiKeys=[];
+  if(s.apiKey && !s.apiKeys.length) s.apiKeys=[s.apiKey];
+  delete s.apiKey;
   return s;
 }
 function save(){ localStorage.setItem('jarvis', JSON.stringify(settings)); }
@@ -421,39 +447,52 @@ function extractJSON(text){
   return null;
 }
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-async function callGemini(body,url){
-  let lastErr='Échec de la requête.';
-  for(let a=0;a<4;a++){
-    let r;
-    try{ r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}); }
-    catch(e){ lastErr='Pas de connexion au serveur Gemini (réseau ?).'; await sleep(1200*(a+1)); continue; }
-    const d=await r.json().catch(()=>({}));
-    if(r.ok) return d;
-    lastErr=d?.error?.message||('HTTP '+r.status);
-    if(r.status===503||r.status===500||r.status===429){ await sleep(1500*(a+1)); continue; }
-    throw new Error(lastErr);
-  }
-  throw new Error('Le modèle est très sollicité en ce moment. Réessaie dans quelques secondes, ou choisis « Flash Lite » dans les réglages.');
+function geminiUrl(model,key){ return `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${enc(key)}`; }
+async function tryOnce(model,key,body){
+  let r,d;
+  try{ r=await fetch(geminiUrl(model,key),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}); d=await r.json().catch(()=>({})); }
+  catch(e){ return {kind:'net', msg:'Pas de connexion (réseau ?)'}; }
+  if(r.ok) return {kind:'ok', data:d};
+  const msg=d?.error?.message||('HTTP '+r.status);
+  if(r.status===400 && /API[_ ]?key not valid|API_KEY_INVALID/i.test(msg)) return {kind:'badkey', msg};
+  if(r.status===403) return {kind:'badkey', msg};
+  if(r.status===503||r.status===500||r.status===429) return {kind:'busy', msg};
+  return {kind:'err', msg};
 }
 async function ask(userText){
   history.push({role:'user',parts:[{text:userText}]});
   if(history.length>16) history=history.slice(-16);
-  const body={ systemInstruction:{parts:[{text:systemPrompt()}]}, contents:history,
-    generationConfig:{ temperature:0.6, responseMimeType:'application/json' } };
-  const url=`https://generativelanguage.googleapis.com/v1beta/models/${settings.model}:generateContent?key=${enc(settings.apiKey)}`;
-  const data=await callGemini(body,url);
-  const parts=data.candidates?.[0]?.content?.parts||[];
-  const raw=parts.map(p=>p.text||'').join('').trim();
-  if(!raw){ const fr=data?.promptFeedback?.blockReason; throw new Error(fr?('Message bloqué ('+fr+')'):'Réponse vide du modèle.'); }
-  let obj=extractJSON(raw)||{reponse:raw, action:{type:'aucune'}};
-  if(!obj.action) obj.action={type:'aucune'};
-  history.push({role:'model',parts:[{text:obj.reponse||''}]});
-  saveHist();
-  return obj;
+  const keys=(settings.apiKeys||[]).map(k=>(k||'').trim()).filter(Boolean);
+  const models=[settings.model]; if(settings.backupModel && settings.backupModel!==settings.model) models.push(settings.backupModel);
+  const makeBody=()=>({ systemInstruction:{parts:[{text:systemPrompt()}]}, contents:history, generationConfig:{ temperature:0.6, responseMimeType:'application/json' } });
+  let lastMsg='Aucune clé ne répond.', badKeys=0;
+  for(let round=0; round<2; round++){
+    for(let mi=0; mi<models.length; mi++){
+      for(let ki=0; ki<keys.length; ki++){
+        const res=await tryOnce(models[mi], keys[ki], makeBody());
+        if(res.kind==='ok'){
+          if(mi>0) toast('Modèle de secours : '+models[mi]);
+          else if(ki>0) toast('Clé '+(ki+1)+' utilisée');
+          const parts=res.data.candidates?.[0]?.content?.parts||[];
+          const raw=parts.map(p=>p.text||'').join('').trim();
+          if(!raw){ const fr=res.data?.promptFeedback?.blockReason; throw new Error(fr?('Message bloqué ('+fr+')'):'Réponse vide du modèle.'); }
+          let obj=extractJSON(raw)||{reponse:raw, action:{type:'aucune'}};
+          if(!obj.action) obj.action={type:'aucune'};
+          history.push({role:'model',parts:[{text:obj.reponse||''}]}); saveHist();
+          return obj;
+        }
+        lastMsg=res.msg||lastMsg;
+        if(res.kind==='badkey') badKeys++;
+        if(res.kind==='busy' && round===0) await sleep(700);
+      }
+    }
+  }
+  if(keys.length && badKeys>=keys.length) throw new Error('Aucune clé valide — vérifie tes clés dans ⚙. ('+lastMsg+')');
+  throw new Error('Toutes les clés et le modèle de secours ont échoué. ('+lastMsg+')');
 }
 
 async function handleUser(text){
-  if(!settings.apiKey){ openSettings(true); return; }
+  if(!(settings.apiKeys && settings.apiKeys.length)){ openSettings(true); return; }
   addMsg(text,'user'); setState('thinking');
   let obj;
   try{ obj=await ask(text); }
@@ -531,23 +570,41 @@ function buildMemList(){
   });
   box.querySelectorAll('button[data-i]').forEach(b=>b.onclick=()=>{ settings.memory.splice(+b.dataset.i,1); save(); buildMemList(); });
 }
+function buildKeyList(){
+  const box=$('#keyList'); if(!box) return; box.innerHTML='';
+  if(!settings.apiKeys.length){ box.innerHTML='<div class="hint">Aucune clé pour l\'instant — ajoute-en une ci-dessous.</div>'; return; }
+  settings.apiKeys.forEach((k,idx)=>{
+    const masked = k.length>10 ? (k.slice(0,6)+'…'+k.slice(-4)) : '••••';
+    const el=document.createElement('div'); el.className='memitem';
+    el.innerHTML=`<span>Clé ${idx+1} — <span style="color:var(--muted)">${masked}</span></span><button data-k="${idx}" title="Retirer">✕</button>`;
+    box.appendChild(el);
+  });
+  box.querySelectorAll('button[data-k]').forEach(b=>b.onclick=()=>{ settings.apiKeys.splice(+b.dataset.k,1); save(); buildKeyList(); });
+}
+function addKeyFromInput(){
+  const inp=$('#newKey'); const v=(inp.value||'').trim();
+  if(!v) return;
+  if(settings.apiKeys.includes(v)){ toast('Cette clé est déjà ajoutée.'); inp.value=''; return; }
+  settings.apiKeys.push(v); save(); inp.value=''; buildKeyList(); toast('Clé ajoutée ✓');
+}
 function fillVoiceSelect(){
   const sel=$('#voice'); if(!sel) return; const base=(settings.lang||'fr').slice(0,2);
   const list=voices.slice().sort((a,b)=>(b.lang.startsWith(base))-(a.lang.startsWith(base)));
   sel.innerHTML = list.map(v=>`<option value="${v.voiceURI}" ${v.voiceURI===settings.voiceURI?'selected':''}>${v.name} (${v.lang})</option>`).join('') || '<option>Voix système par défaut</option>';
 }
 function openSettings(focusKey){
-  $('#apiKey').value=settings.apiKey; $('#userName').value=settings.userName||''; $('#model').value=settings.model; $('#lang').value=settings.lang;
+  $('#userName').value=settings.userName||''; $('#model').value=settings.model; $('#backupModel').value=settings.backupModel||''; $('#lang').value=settings.lang;
   $('#rate').value=settings.rate; $('#pitch').value=settings.pitch; $('#rateV').textContent=(+settings.rate).toFixed(2); $('#pitchV').textContent=(+settings.pitch).toFixed(2);
   $('#wake').checked=!!settings.wake;
-  buildIntegrations(); buildMemList(); fillVoiceSelect();
+  buildKeyList(); buildIntegrations(); buildMemList(); fillVoiceSelect();
   $('#overlay').classList.add('open');
-  if(focusKey){ toast('Ajoute ta clé Gemini pour démarrer.'); setTimeout(()=>$('#apiKey').focus(),300); }
+  if(focusKey){ toast('Ajoute ta clé Gemini pour démarrer.'); setTimeout(()=>$('#newKey').focus(),300); }
 }
 function closeSettings(){ $('#overlay').classList.remove('open'); }
 function saveSettings(){
-  settings.apiKey=$('#apiKey').value.trim(); settings.userName=$('#userName').value.trim();
-  settings.model=$('#model').value; settings.lang=$('#lang').value;
+  const nk=($('#newKey').value||'').trim(); if(nk && !settings.apiKeys.includes(nk)){ settings.apiKeys.push(nk); $('#newKey').value=''; }
+  settings.userName=$('#userName').value.trim();
+  settings.model=$('#model').value; settings.backupModel=$('#backupModel').value; settings.lang=$('#lang').value;
   settings.voiceURI=$('#voice').value; settings.rate=$('#rate').value; settings.pitch=$('#pitch').value;
   settings.wake=$('#wake').checked;
   document.querySelectorAll('#integrations input[data-k]').forEach(c=>{ settings.integrations[c.dataset.k]=c.checked; });
@@ -568,6 +625,8 @@ $('#pitch').oninput=e=>$('#pitchV').textContent=(+e.target.value).toFixed(2);
 $('#lang').onchange=fillVoiceSelect;
 $('#clearMem').onclick=()=>{ settings.memory=[]; save(); buildMemList(); toast('Mémoire effacée.'); };
 $('#clearHist').onclick=()=>{ history=[]; saveHist(); logEl.innerHTML=''; toast('Conversation effacée.'); addMsg('Nouvelle conversation.','sys'); };
+$('#addKey').onclick=addKeyFromInput;
+$('#newKey').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); addKeyFromInput(); } });
 const txt=$('#txt'), sendBtn=$('#send');
 txt.addEventListener('input',()=>{ sendBtn.style.display=txt.value.trim()?'grid':'none'; });
 function submitText(){ const v=txt.value.trim(); if(!v)return; primeTTS(); txt.value=''; sendBtn.style.display='none'; handleUser(v); }
@@ -584,8 +643,8 @@ window.addEventListener('load',()=>{
   // Reprise de la conversation précédente
   history.forEach(h=>{ const txt=(h.parts&&h.parts[0]&&h.parts[0].text)||''; if(txt) addMsg(txt, h.role==='user'?'user':'bot'); });
   const prenom = settings.userName ? (' ' + settings.userName) : '';
-  if(!settings.apiKey){
-    addMsg("Bienvenue. Je suis JARVIS. Ouvre les réglages (⚙) pour coller ta clé Gemini, puis parle-moi.",'sys');
+  if(!settings.apiKeys.length){
+    addMsg("Bienvenue. Je suis JARVIS. Ouvre les réglages (⚙) pour ajouter ta clé Gemini, puis parle-moi.",'sys');
     setTimeout(()=>{ mascotSay('Salut ! Ajoute ta clé dans ⚙ pour commencer.'); openSettings(true); },500);
   } else {
     if(history.length) addMsg("— conversation reprise —",'sys');
